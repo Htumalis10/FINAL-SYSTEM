@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            {% if product.image_url %}
+            <img src="{{ url_for('static', filename=product.image_url) }}" alt="{{ product.name }}" class="img-fluid rounded">
+            {% else %}
+            <img src="{{ url_for('static', filename='uploads/default.jpg') }}" alt="{{ product.name }}" class="img-fluid rounded">
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h2 class="mb-3">{{ product.name }}</h2>
+            <p class="text-muted mb-4">Category: {{ product.category }}</p>
+            <div class="mb-4">
+                <h4 class="text-primary">₱{{ "%.2f"|format(product.price) }}</h4>
+                <p class="text-muted">Stock: {{ product.stock }} items available</p>
+            </div>
+            <div class="mb-4">
+                <h5>Description</h5>
+                <p>{{ product.description }}</p>
+            </div>
+            {% if current_user.is_authenticated %}
+                <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" 
+                               value="1" min="1" max="{{ product.stock }}" required 
+                               style="max-width: 100px;">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg" 
+                            {% if product.stock == 0 %}disabled{% endif %}>
+                        {% if product.stock > 0 %}
+                            Add to Cart
+                        {% else %}
+                            Out of Stock
+                        {% endif %}
+                    </button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Login to Purchase</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

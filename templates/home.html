@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if not selected_category %}
+<header class="hero-header">
+    <div class="hero-content">
+        <h1>Welcome to Our UKAY2 Store</h1>
+        <p class="lead">Discover unique fashion pieces at affordable prices</p>
+        <p>Located at Commonwealth Aurora Zamboanga Del Sur</p>
+    </div>
+</header>
+{% endif %}
+
+<div class="container {% if selected_category %}mt-4{% else %}mt-5{% endif %}">
+    <div class="row mb-4">
+        <div class="col">
+            <div class="category-filter">
+                <a href="{{ url_for('home') }}" class="btn {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %} me-2">
+                    <i class="fas fa-th-large"></i> All
+                </a>
+                {% for category in categories %}
+                <a href="{{ url_for('home', category=category) }}" class="btn {% if selected_category == category %}btn-primary{% else %}btn-outline-primary{% endif %} me-2">
+                    {% if category == 'Clothing' %}
+                        <i class="fas fa-tshirt"></i>
+                    {% elif category == 'Accessories' %}
+                        <i class="fas fa-gem"></i>
+                    {% elif category == 'Shoes' %}
+                        <i class="fas fa-shoe-prints"></i>
+                    {% elif category == 'Bags' %}
+                        <i class="fas fa-shopping-bag"></i>
+                    {% endif %}
+                    {{ category }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% if selected_category %}
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="category-title">{{ selected_category }} <small class="text-muted">({{ products|length }} items)</small></h2>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4 mb-4">
+            <div class="product-card">
+                {% if product.image_url %}
+                <img src="{{ url_for('static', filename=product.image_url) }}" class="product-image" alt="{{ product.name }}">
+                {% else %}
+                <img src="{{ url_for('static', filename='uploads/default.jpg') }}" class="product-image" alt="{{ product.name }}">
+                {% endif %}
+                <div class="product-info">
+                    <h3 class="product-title">{{ product.name }}</h3>
+                    <p class="product-price">₱{{ "%.2f"|format(product.price) }}</p>
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

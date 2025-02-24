@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}GCash Payment{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">GCash Payment</h4>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <div class="alert alert-info">
+                        <h5>Payment Instructions:</h5>
+                        <ol>
+                            <li>Open your GCash app</li>
+                            <li>Send ₱{{ "%.2f"|format(order.total_amount) }} to this GCash number: <strong>09123456789</strong></li>
+                            <li>Take a screenshot of your successful payment</li>
+                            <li>Upload the screenshot below</li>
+                        </ol>
+                    </div>
+
+                    <div class="payment-details mb-4">
+                        <h5>Order Details:</h5>
+                        <p><strong>Order ID:</strong> {{ order.id }}</p>
+                        <p><strong>Total Amount:</strong> ₱{{ "%.2f"|format(order.total_amount) }}</p>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="payment_screenshot" class="form-label">Upload Payment Screenshot</label>
+                            <input type="file" class="form-control" id="payment_screenshot" name="payment_screenshot" accept="image/*" required>
+                            <div class="form-text">Please upload a clear screenshot of your GCash payment confirmation.</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Payment Proof</button>
+                        <a href="{{ url_for('orders') }}" class="btn btn-secondary">View Orders</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

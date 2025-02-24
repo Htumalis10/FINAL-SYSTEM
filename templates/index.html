@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Thrift Store{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container">
+        <h1>Welcome to Our Thrift Store</h1>
+        <p class="lead">Discover unique fashion pieces at affordable prices</p>
+    </div>
+</section>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Categories</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="{{ url_for('home') }}" 
+                           class="list-group-item list-group-item-action {% if not selected_category %}active{% endif %}">
+                            All Items
+                        </a>
+                        {% for category in categories %}
+                        <a href="{{ url_for('home', category=category) }}" 
+                           class="list-group-item list-group-item-action {% if selected_category == category %}active{% endif %}">
+                            {{ category }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            {% if selected_category %}
+                <h2 class="mb-4">{{ selected_category }}</h2>
+            {% endif %}
+            
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4 mb-4">
+                    <div class="product-card">
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="text-decoration-none">
+                            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+                            <div class="product-info">
+                                <h5 class="product-title">{{ product.name }}</h5>
+                                <p class="text-muted">{{ product.description[:100] }}...</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="product-price">₱{{ "%.2f"|format(product.price) }}</span>
+                                    {% if current_user.is_authenticated %}
+                                        <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+                                            <button type="submit" class="btn btn-primary" {% if product.stock == 0 %}disabled{% endif %}>
+                                                {% if product.stock > 0 %}
+                                                    Add to Cart
+                                                {% else %}
+                                                    Out of Stock
+                                                {% endif %}
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <a href="{{ url_for('login') }}" class="btn btn-primary">Login to Buy</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-12 text-center py-5">
+                    <h3>No products found</h3>
+                    {% if selected_category %}
+                        <p>No products available in {{ selected_category }} category.</p>
+                        <a href="{{ url_for('home') }}" class="btn btn-primary">View All Products</a>
+                    {% else %}
+                        <p>Check back later for new arrivals!</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
