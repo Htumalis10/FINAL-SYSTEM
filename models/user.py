@@ -1,4 +1,5 @@
-from . import db, UserMixin
+from flask_login import UserMixin
+from . import db
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -12,3 +13,13 @@ class User(UserMixin, db.Model):
 
     def is_administrator(self):
         return self.is_admin
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'name': self.name,
+            'address': self.address,
+            'phone': self.phone,
+            'is_admin': self.is_admin
+        }

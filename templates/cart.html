@@ -14,21 +14,21 @@
                     <div class="row align-items-center">
                         <div class="col-md-3">
                             {% if item.product.image_url %}
-                                <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" class="img-fluid rounded" onerror="this.src='/static/uploads/default.jpg'">
+                                <img src="{{ url_for('static', filename=item.product.image_url.replace('/static/', '')) }}" alt="{{ item.product.name }}" class="img-fluid rounded" onerror="this.src='{{ url_for('static', filename='uploads/default.jpg') }}'">
                             {% else %}
-                                <img src="/static/uploads/default.jpg" alt="{{ item.product.name }}" class="img-fluid rounded">
+                                <img src="{{ url_for('static', filename='uploads/default.jpg') }}" alt="{{ item.product.name }}" class="img-fluid rounded">
                             {% endif %}
                         </div>
                         <div class="col-md-6">
                             <h5>{{ item.product.name }}</h5>
                             <p class="text-muted">{{ item.product.description[:100] }}...</p>
                             <div class="quantity">
-                                <form action="{{ url_for('update_cart', item_id=item.id) }}" method="POST" class="d-inline">
+                                <form action="{{ url_for('main.update_cart', item_id=item.id) }}" method="POST" class="d-inline">
                                     <button type="submit" name="action" value="decrease" class="btn btn-sm btn-outline-secondary">-</button>
                                     <span class="mx-2">{{ item.quantity }}</span>
                                     <button type="submit" name="action" value="increase" class="btn btn-sm btn-outline-secondary">+</button>
                                 </form>
-                                <form action="{{ url_for('remove_from_cart', item_id=item.id) }}" method="POST" class="d-inline ms-3">
+                                <form action="{{ url_for('main.remove_from_cart', item_id=item.id) }}" method="POST" class="d-inline ms-3">
                                     <button type="submit" class="btn btn-sm btn-danger">Remove</button>
                                 </form>
                             </div>
@@ -58,7 +58,7 @@
                         <strong>Total</strong>
                         <strong>₱{{ "%.2f"|format(total) }}</strong>
                     </div>
-                    <a href="{{ url_for('checkout') }}" class="btn btn-primary w-100">Proceed to Checkout</a>
+                    <a href="{{ url_for('main.checkout') }}" class="btn btn-primary w-100">Proceed to Checkout</a>
                 </div>
             </div>
         </div>
@@ -66,7 +66,7 @@
         <div class="text-center py-5">
             <h3>Your cart is empty</h3>
             <p>Looks like you haven't added any items to your cart yet.</p>
-            <a href="{{ url_for('home') }}" class="btn btn-primary">Continue Shopping</a>
+            <a href="{{ url_for('main.home') }}" class="btn btn-primary">Continue Shopping</a>
         </div>
     {% endif %}
 </div>

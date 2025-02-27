@@ -3,18 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Hany Tumalis UKAY2 Store{% endblock %}</title>
+    <title>{% block title %}Hany's Thrifts{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://kit.fontawesome.com/d0fb25e48c.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <!-- Top Banner -->
+    <div class="top-banner">
+        <div class="container">
+            <p class="mb-0"><i class="fas fa-truck"></i> Free shipping on orders over ₱1000</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
             <div class="d-flex align-items-center">
                 <img src="{{ url_for('static', filename='uploads/PROFILE.jpg') }}" alt="Store Owner" class="owner-profile-img">
-                <a class="navbar-brand" href="{{ url_for('home') }}">Hany Tumalis UKAY2 Store</a>
+                <a class="navbar-brand" href="{{ url_for('main.home') }}">Hany's Thrifts</a>
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -22,35 +30,38 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('home') }}">
-                            <i class="fas fa-home"></i> HOME
+                        <a class="nav-link" href="{{ url_for('main.home') }}">
+                            <i class="fas fa-home"></i> Home
                         </a>
                     </li>
                     {% if current_user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('cart') }}">
-                                <i class="fas fa-shopping-cart"></i> CART
+                            <a class="nav-link cart-badge" href="{{ url_for('main.cart') }}">
+                                <i class="fas fa-shopping-cart"></i> Cart
+                                {% if cart_count %}
+                                    <span class="cart-count">{{ cart_count }}</span>
+                                {% endif %}
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('orders') }}">
-                                <i class="fas fa-box"></i> ORDERS
+                            <a class="nav-link" href="{{ url_for('main.orders') }}">
+                                <i class="fas fa-box"></i> Orders
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('logout') }}">
-                                <i class="fas fa-sign-out-alt"></i> LOGOUT
+                            <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                                <i class="fas fa-sign-out-alt"></i> Logout
                             </a>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('login') }}">
-                                <i class="fas fa-sign-in-alt"></i> LOGIN
+                            <a class="nav-link" href="{{ url_for('auth.login') }}">
+                                <i class="fas fa-sign-in-alt"></i> Login
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('register') }}">
-                                <i class="fas fa-user-plus"></i> REGISTER
+                            <a class="nav-link" href="{{ url_for('auth.register') }}">
+                                <i class="fas fa-user-plus"></i> Register
                             </a>
                         </li>
                     {% endif %}
@@ -59,32 +70,53 @@
         </div>
     </nav>
 
+    <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
+            <div class="container mt-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
     {% endwith %}
 
-    {% block content %}{% endblock %}
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
 
+    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
-                    <h5>About Us</h5>
-                    <p>Your trusted thrift store for unique and sustainable fashion.</p>
+                    <h5><i class="fas fa-heart"></i> About Us</h5>
+                    <p>Your trusted boutique for unique and sustainable fashion. We bring you carefully curated pieces that make you feel beautiful and confident.</p>
                 </div>
                 <div class="col-md-4">
+                    <h5><i class="fas fa-map-marker-alt"></i> Visit Us</h5>
+                    <p>Commonwealth Aurora<br>
+                    Zamboanga Del Sur<br>
+                    Philippines</p>
                 </div>
                 <div class="col-md-4">
-                    <h5>Contact Us</h5>
+                    <h5><i class="fas fa-envelope"></i> Contact Us</h5>
                     <p>Email: hanilyntumalis@gmail.com<br>
-                    Phone: 0987-127-7680</p>
+                    Phone: 0987-127-7680<br>
+                    <div class="social-icons mt-3">
+                        <a href="#" class="me-3"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <p class="mb-0">&copy; 2024 Hany's Thrifts. All rights reserved.</p>
                 </div>
             </div>
         </div>

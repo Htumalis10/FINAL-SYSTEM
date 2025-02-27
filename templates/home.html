@@ -4,63 +4,147 @@
 {% if not selected_category %}
 <header class="hero-header">
     <div class="hero-content">
-        <h1>Welcome to Our UKAY2 Store</h1>
-        <p class="lead">Discover unique fashion pieces at affordable prices</p>
-        <p>Located at Commonwealth Aurora Zamboanga Del Sur</p>
+        <h1>Welcome to Hany's Thrifts</h1>
+        <p class="lead">Discover Your Perfect Style</p>
+        <p class="subtitle">Curated Fashion Pieces at Affordable Prices</p>
+        <div class="mt-4">
+            <a href="#products" class="btn btn-light btn-lg">Shop Now <i class="fas fa-arrow-right"></i></a>
+        </div>
     </div>
 </header>
-{% endif %}
 
-<div class="container {% if selected_category %}mt-4{% else %}mt-5{% endif %}">
-    <div class="row mb-4">
-        <div class="col">
-            <div class="category-filter">
-                <a href="{{ url_for('home') }}" class="btn {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %} me-2">
-                    <i class="fas fa-th-large"></i> All
-                </a>
-                {% for category in categories %}
-                <a href="{{ url_for('home', category=category) }}" class="btn {% if selected_category == category %}btn-primary{% else %}btn-outline-primary{% endif %} me-2">
-                    {% if category == 'Clothing' %}
-                        <i class="fas fa-tshirt"></i>
-                    {% elif category == 'Accessories' %}
-                        <i class="fas fa-gem"></i>
-                    {% elif category == 'Shoes' %}
-                        <i class="fas fa-shoe-prints"></i>
-                    {% elif category == 'Bags' %}
-                        <i class="fas fa-shopping-bag"></i>
-                    {% endif %}
-                    {{ category }}
-                </a>
-                {% endfor %}
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <i class="fas fa-truck"></i>
+                    <h3>Fast Delivery</h3>
+                    <p>Quick and reliable shipping nationwide</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <i class="fas fa-tags"></i>
+                    <h3>Best Prices</h3>
+                    <p>Quality fashion at affordable prices</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Secure Shopping</h3>
+                    <p>Safe and secure payment options</p>
+                </div>
             </div>
         </div>
     </div>
+</section>
+{% endif %}
 
+<div class="container {% if selected_category %}mt-4{% else %}mt-5{% endif %}" id="products">
+    <!-- Category Title -->
     {% if selected_category %}
-    <div class="row mb-4">
-        <div class="col">
-            <h2 class="category-title">{{ selected_category }} <small class="text-muted">({{ products|length }} items)</small></h2>
-        </div>
+    <div class="text-center mb-5">
+        <h2 class="category-title">{{ selected_category }} Collection</h2>
+        <p class="text-muted">{{ products|length }} items found</p>
+    </div>
+    {% else %}
+    <div class="text-center mb-5">
+        <h2 class="section-title">Our Collections</h2>
+        <p class="text-muted">Discover our latest arrivals and trending pieces</p>
     </div>
     {% endif %}
 
+    <!-- Category Filter -->
+    <div class="category-filter">
+        <a href="{{ url_for('main.home') }}" class="btn {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %} me-2">
+            <i class="fas fa-th-large"></i> All
+        </a>
+        {% for category in categories %}
+        <a href="{{ url_for('main.home', category=category) }}" class="btn {% if selected_category == category %}btn-primary{% else %}btn-outline-primary{% endif %} me-2">
+            {% if category == 'Clothing' %}
+                <i class="fas fa-tshirt"></i>
+            {% elif category == 'Accessories' %}
+                <i class="fas fa-gem"></i>
+            {% elif category == 'Shoes' %}
+                <i class="fas fa-shoe-prints"></i>
+            {% elif category == 'Bags' %}
+                <i class="fas fa-shopping-bag"></i>
+            {% endif %}
+            {{ category }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Products Grid -->
     <div class="row">
         {% for product in products %}
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 col-lg-3 mb-4">
             <div class="product-card">
-                {% if product.image_url %}
-                <img src="{{ url_for('static', filename=product.image_url) }}" class="product-image" alt="{{ product.name }}">
-                {% else %}
-                <img src="{{ url_for('static', filename='uploads/default.jpg') }}" class="product-image" alt="{{ product.name }}">
-                {% endif %}
+                <div class="product-image-wrapper">
+                    {% if product.image_url %}
+                    <img src="{{ url_for('static', filename=product.image_url) }}" class="product-image" alt="{{ product.name }}">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='uploads/default.jpg') }}" class="product-image" alt="{{ product.name }}">
+                    {% endif %}
+                    <div class="product-overlay">
+                        <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-light">View Details</a>
+                    </div>
+                </div>
                 <div class="product-info">
                     <h3 class="product-title">{{ product.name }}</h3>
                     <p class="product-price">₱{{ "%.2f"|format(product.price) }}</p>
-                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-primary">View Details</a>
+                    {% if product.stock > 0 %}
+                    <span class="stock-status in-stock">In Stock</span>
+                    {% else %}
+                    <span class="stock-status out-of-stock">Out of Stock</span>
+                    {% endif %}
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
+
+    {% if not products %}
+    <div class="text-center py-5">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <h3>No products found</h3>
+        <p class="text-muted">Try searching for a different category or check back later for new arrivals.</p>
+    </div>
+    {% endif %}
 </div>
+
+{% if not selected_category %}
+<!-- Newsletter Section -->
+<section class="newsletter-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h3>Stay Updated</h3>
+                <p>Subscribe to our newsletter for the latest arrivals and special offers!</p>
+                <form class="newsletter-form">
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Enter your email">
+                        <button class="btn btn-primary" type="submit">Subscribe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Smooth scroll for "Shop Now" button
+    document.querySelector('a[href="#products"]').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector('#products').scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+</script>
 {% endblock %}

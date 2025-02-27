@@ -24,26 +24,60 @@
                 <p>{{ product.description }}</p>
             </div>
             {% if current_user.is_authenticated %}
-                <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+                <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST" class="mb-3">
                     <div class="mb-3">
                         <label for="quantity" class="form-label">Quantity</label>
                         <input type="number" class="form-control" id="quantity" name="quantity" 
                                value="1" min="1" max="{{ product.stock }}" required 
                                style="max-width: 100px;">
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg" 
+                    <button type="submit" class="btn btn-primary btn-lg me-2" 
                             {% if product.stock == 0 %}disabled{% endif %}>
+                        <i class="fas fa-shopping-cart"></i>
                         {% if product.stock > 0 %}
                             Add to Cart
                         {% else %}
                             Out of Stock
                         {% endif %}
                     </button>
+                    <a href="{{ url_for('main.cart') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-shopping-bag"></i> View Cart
+                    </a>
                 </form>
             {% else %}
-                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Login to Purchase</a>
+                <div class="alert alert-info" role="alert">
+                    <i class="fas fa-info-circle"></i> Please login to add items to your cart.
+                </div>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-sign-in-alt"></i> Login to Purchase
+                </a>
             {% endif %}
+            
+            <div class="mt-4">
+                <h5>Shipping Information</h5>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-truck text-primary me-2"></i> Free shipping on orders over ₱1000</li>
+                    <li><i class="fas fa-clock text-primary me-2"></i> Delivery within 2-3 business days</li>
+                    <li><i class="fas fa-shield-alt text-primary me-2"></i> Secure payment options</li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Quantity input validation
+    document.getElementById('quantity').addEventListener('change', function(e) {
+        const max = parseInt(this.getAttribute('max'));
+        const value = parseInt(this.value);
+        if (value > max) {
+            this.value = max;
+        }
+        if (value < 1) {
+            this.value = 1;
+        }
+    });
+</script>
 {% endblock %}

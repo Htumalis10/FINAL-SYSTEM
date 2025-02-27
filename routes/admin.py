@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 import os
 from models import db, Product
 from utils.decorators import admin_required
+from services.product_manager import ProductManager
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -19,34 +20,19 @@ def dashboard():
 @admin_required
 def add_product():
     if request.method == 'POST':
-        name = request.form.get('name')
-        description = request.form.get('description')
-        price = float(request.form.get('price'))
-        category = request.form.get('category')
-        stock = int(request.form.get('stock'))
-        image = request.files.get('image')
-        
-        if image:
-            filename = secure_filename(image.filename)
-            image.save(os.path.join('static/uploads', filename))
-            image_url = f'/static/uploads/{filename}'
-        else:
-            image_url = None
-        
-        product = Product(
-            name=name,
-            description=description,
-            price=price,
-            category=category,
-            stock=stock,
-            image_url=image_url
-        )
-        
-        db.session.add(product)
-        db.session.commit()
-        
-        flash('Product added successfully!', 'success')
-        return redirect(url_for('admin.dashboard'))
+        try:
+            ProductManager.create_product(
+                name=request.form.get('name'),
+                description=request.form.get('description'),
+                price=float(request.form.get('price')),
+                category=request.form.get('category'),
+                stock=int(request.form.get('stock')),
+                image=request.files.get('image')
+            )
+            flash('Product added successfully!', 'success')
+            return redirect(url_for('admin.dashboard'))
+        except Exception as e:
+            flash(f'Error adding product: {str(e)}', 'danger')
     
     return render_template('admin/add_product.html')
 
@@ -54,24 +40,22 @@ def add_product():
 @login_required
 @admin_required
 def edit_product(id):
-    product = Product.query.get_or_404(id)
+    product = Product.get_by_id(id)
+    if not product:
+        flash('Product not found', 'danger')
+        return redirect(url_for('admin.dashboard'))
     
     if request.method == 'POST':
-        product.name = request.form.get('name')
-        product.description = request.form.get('description')
-        product.price = float(request.form.get('price'))
-        product.category = request.form.get('category')
-        product.stock = int(request.form.get('stock'))
-        
-        image = request.files.get('image')
-        if image:
-            filename = secure_filename(image.filename)
-            image.save(os.path.join('static/uploads', filename))
-            product.image_url = f'/static/uploads/{filename}'
-        
-        db.session.commit()
-        flash('Product updated successfully!', 'success')
-        return redirect(url_for('admin.dashboard'))
+        try:
+            ProductManager.update_product(
+                product_id=id,
+                data=request.form,
+                image=request.files.get('image')
+            )
+            flash('Product updated successfully!', 'success')
+            return redirect(url_for('admin.dashboard'))
+        except Exception as e:
+            flash(f'Error updating product: {str(e)}', 'danger')
     
     return render_template('admin/edit_product.html', product=product)
 

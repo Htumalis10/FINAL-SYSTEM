@@ -4,6 +4,8 @@ from models import db, Order, OrderItem, Cart
 from werkzeug.utils import secure_filename
 import os
 import logging
+from services.order_manager import OrderManager
+from services.cart_manager import CartManager
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -22,78 +24,28 @@ def orders():
 @orders_bp.route('/checkout', methods=['GET', 'POST'])
 @login_required
 def checkout():
-    cart_items = Cart.query.filter_by(user_id=current_user.id).all()
+    cart_items = CartManager.get_user_cart()
     if not cart_items:
         flash('Your cart is empty', 'warning')
         return redirect(url_for('cart.view_cart'))
 
-    total = sum(item.product.price * item.quantity for item in cart_items)
+    total = CartManager.calculate_total()
     
     if request.method == 'POST':
-        logger.debug("Processing checkout POST request")
-        payment_method = request.form.get('payment_method')
-        address = request.form.get('address')
-        phone = request.form.get('phone')
-
-        logger.debug(f"Payment Method: {payment_method}, Address: {address}, Phone: {phone}")
-
-        if not address or not phone:
-            flash('Please provide delivery address and contact number', 'danger')
-            return redirect(url_for('orders.checkout'))
-
-        if payment_method not in ['gcash', 'cod']:
-            flash('Invalid payment method', 'danger')
-            return redirect(url_for('orders.checkout'))
-
-        # Check stock availability
-        for cart_item in cart_items:
-            if cart_item.quantity > cart_item.product.stock:
-                flash(f'Not enough stock for {cart_item.product.name}', 'danger')
-                return redirect(url_for('cart.view_cart'))
-
         try:
-            # Create the order
-            order = Order(
-                user_id=current_user.id,
-                total_amount=total,
-                payment_method=payment_method,
-                status='pending'
-            )
-            logger.debug(f"Created order object: {order.user_id}, {order.total_amount}, {order.payment_method}")
-            db.session.add(order)
-            db.session.flush()  # This gets us the order ID
-
-            # Add order items and update stock
-            for cart_item in cart_items:
-                order_item = OrderItem(
-                    order=order,
-                    product_id=cart_item.product_id,
-                    quantity=cart_item.quantity,
-                    price=cart_item.product.price
-                )
-                db.session.add(order_item)
-                cart_item.product.stock -= cart_item.quantity
-                logger.debug(f"Added order item: product_id={cart_item.product_id}, quantity={cart_item.quantity}")
-
-            # Clear the cart
-            for item in cart_items:
-                db.session.delete(item)
-
-            db.session.commit()
-            logger.debug("Successfully committed order to database")
-
-            if payment_method == 'gcash':
-                return redirect(url_for('orders.gcash_payment', order_id=order.id))
-            else:
-                flash('Order placed successfully! Our team will contact you for delivery.', 'success')
-                return redirect(url_for('orders.orders'))
-
+            payment_method = request.form.get('payment_method')
+            address = request.form.get('address')
+            phone = request.form.get('phone')
+            
+            order = OrderManager.create_order(payment_method, address, phone)
+            
+            flash('Order placed successfully!', 'success')
+            return redirect(url_for('orders.orders'))
+            
         except Exception as e:
-            logger.error(f"Error creating order: {str(e)}")
-            db.session.rollback()
-            flash('An error occurred while processing your order. Please try again.', 'danger')
+            flash(str(e), 'danger')
             return redirect(url_for('orders.checkout'))
-
+    
     return render_template('checkout.html', cart_items=cart_items, total=total)
 
 @orders_bp.route('/gcash_payment/<int:order_id>', methods=['GET', 'POST'])

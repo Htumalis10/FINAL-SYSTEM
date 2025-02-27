@@ -10,7 +10,7 @@
         <div class="col-md-8">
             <div class="payment-method mb-4">
                 <h4>Payment Method</h4>
-                <form action="{{ url_for('checkout') }}" method="POST" id="checkoutForm">
+                <form action="{{ url_for('main.checkout') }}" method="POST" id="checkoutForm">
                     <div class="mb-4">
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="radio" name="payment_method" id="gcash" value="gcash" required>
@@ -62,12 +62,26 @@
                 <h4>Order Summary</h4>
                 <hr>
                 {% for item in cart_items %}
-                <div class="d-flex justify-content-between mb-2">
-                    <div>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="flex-shrink-0 me-3" style="width: 60px;">
+                        {% if item.product.image_url %}
+                            <img src="{{ url_for('static', filename=item.product.image_url.replace('/static/', '')) }}" 
+                                 alt="{{ item.product.name }}" 
+                                 class="img-fluid rounded" 
+                                 onerror="this.src='{{ url_for('static', filename='uploads/default.jpg') }}'">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='uploads/default.jpg') }}" 
+                                 alt="{{ item.product.name }}" 
+                                 class="img-fluid rounded">
+                        {% endif %}
+                    </div>
+                    <div class="flex-grow-1">
                         <h6 class="mb-0">{{ item.product.name }}</h6>
                         <small class="text-muted">Quantity: {{ item.quantity }}</small>
+                        <div class="text-end">
+                            <span>₱{{ "%.2f"|format(item.product.price * item.quantity) }}</span>
+                        </div>
                     </div>
-                    <span>₱{{ "%.2f"|format(item.product.price * item.quantity) }}</span>
                 </div>
                 {% endfor %}
                 <hr>
