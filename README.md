@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # HanyThrift - Secondhand Shopping Platform
 
 HanyThrift is a modern web application for buying and selling secondhand items, built with Next.js for the frontend and Python FastAPI for the backend. The platform features secure authentication, real-time cart management, and a responsive user interface.
@@ -219,3 +220,6 @@ The application is fully responsive and tested on:
 - Verify the backend is running on port 8000
 - Check for any errors in the terminal running the backend
 - Make sure all required Python packages are installed 
+=======
+# FINAL-SYSTEM
+>>>>>>> 027d31e3a26870027cd6a0a701ca06a8149efe33
