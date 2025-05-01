@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # HanyThrift - Secondhand Shopping Platform
 
 HanyThrift is a modern web application for buying and selling secondhand items, built with Next.js for the frontend and Python FastAPI for the backend. The platform features secure authentication, real-time cart management, and a responsive user interface.
@@ -31,6 +30,47 @@ HanyThrift is a modern web application for buying and selling secondhand items, 
   - Toast notifications
   - Offline support for images
 
+## 💻 Technologies and System Architecture
+
+### Languages and Frameworks
+- **Frontend**:
+  - TypeScript: Primary language for type-safe frontend development
+  - React: Component-based UI library
+  - Next.js 14: React framework for production
+  - Tailwind CSS: Utility-first CSS framework for styling
+  
+- **Backend**:
+  - Python 3.8+: Primary language for backend development
+  - FastAPI: Modern, high-performance web framework
+  - SQLAlchemy: SQL toolkit and ORM
+  - Pydantic: Data validation and settings management
+
+### System Architecture
+- **Client-Server Model**: The application follows a client-server architecture where the Next.js frontend communicates with the FastAPI backend via RESTful API calls.
+
+- **Data Flow**:
+  1. User interacts with the Next.js frontend
+  2. Frontend makes API requests to the backend using the API client (`/lib/api.ts`)
+  3. Backend processes requests, interacts with the SQLite database, and returns responses
+  4. Frontend updates the UI based on responses
+
+- **Authentication Flow**:
+  1. User credentials are sent to the backend
+  2. Backend validates credentials and issues JWT tokens
+  3. Frontend stores tokens (access token in memory, refresh token in localStorage)
+  4. Tokens are automatically refreshed before expiration
+  5. Protected routes check for valid tokens before allowing access
+
+- **State Management**:
+  - React Context API used for global state (auth, cart)
+  - Component-level state for UI interactions
+  - Backend maintains session information via JWT tokens
+
+- **Database Design**:
+  - SQLite database with SQLAlchemy ORM
+  - Core models: User, Product, Order, OrderItem, CartItem
+  - Relationships maintained through foreign keys
+
 ## 🚀 Quick Start Guide
 
 ### Prerequisites
@@ -39,7 +79,21 @@ HanyThrift is a modern web application for buying and selling secondhand items, 
 - Python (v3.8 or higher)
 - Git
 
-### Step 1: Frontend Setup
+### Option 1: One-Click Start (Windows)
+
+For Windows users, you can use the provided PowerShell script to start both frontend and backend services with a single command:
+
+```powershell
+./run-dev.ps1
+```
+
+This will:
+1. Start the FastAPI backend server in a new PowerShell window
+2. Start the Next.js frontend development server in the current window
+
+### Option 2: Manual Setup
+
+#### Step 1: Frontend Setup
 
 1. Install Node.js dependencies:
    ```bash
@@ -55,38 +109,22 @@ HanyThrift is a modern web application for buying and selling secondhand items, 
 
    The frontend will be available at `http://localhost:3000`
 
-### Step 2: Backend Setup
+#### Step 2: Backend Setup
 
 1. Navigate to the backend directory:
    ```bash
    cd backend
    ```
-
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
+   python -m uvicorn main:app --reload 
 3. Install Python dependencies:
    ```bash
    pip install -r requirements.txt
    ```
-
-4. Start the backend server:
+5. Start the backend server:
    ```bash
    python -m uvicorn main:app --reload
-   # Or use the batch file
-   ./run_backend.bat
    ```
-
    The backend API will be available at `http://localhost:8000`
-
-## 📚 API Documentation
-
-Once the backend server is running, you can access:
-- Interactive API docs (Swagger UI): `http://localhost:8000/docs`
-- Alternative API docs (ReDoc): `http://localhost:8000/redoc`
 
 ## 🔐 Authentication Flow
 
@@ -110,28 +148,6 @@ Once the backend server is running, you can access:
 
 The application uses SQLite as its database. The database file (`backend/hanythrift.db`) will be created automatically when you first run the application. Sample products are automatically added for demonstration purposes.
 
-## 📋 API Endpoints
-
-### Authentication
-- `POST /token` - Login to get access token
-- `POST /token/refresh` - Refresh access token
-- `POST /users/` - Create new user
-
-### Products
-- `GET /products/` - List all products
-- `GET /products/{product_id}` - Get product details
-- `POST /products/` - Create new product (seller only)
-
-### Cart
-- `GET /cart/` - Get user's cart items
-- `POST /cart/` - Add item to cart
-- `PUT /cart/{cart_item_id}` - Update cart item quantity
-- `DELETE /cart/{cart_item_id}` - Remove item from cart
-
-### Orders
-- `GET /orders/` - List user's orders
-- `POST /orders/` - Create new order
-
 ## 📁 Project Structure
 
 ```
@@ -153,17 +169,6 @@ hanythrift/
 │   └── requirements.txt  # Python dependencies
 └── README.md             # This file
 ```
-
-## 🔧 Configuration
-
-### Frontend Configuration
-- API base URL is configured in `lib/api.ts`
-- Image handling is configured in `next.config.mjs`
-
-### Backend Configuration
-- JWT secret key and algorithm in `auth.py`
-- CORS settings in `main.py`
-- Database connection in `database.py`
 
 ## 🛠️ Development Tips
 
@@ -190,36 +195,41 @@ hanythrift/
 - CORS protection
 - SQLite database for simple deployment
 
-## 🌐 Browser Support
 
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
+## 💰 Payment System
 
-## 📱 Mobile Responsiveness
+HanyThrift uses a secure payment processing system that handles customer transactions for secondhand item purchases. The payment flow is designed to be user-friendly while maintaining security and reliability.
 
-The application is fully responsive and tested on:
-- Desktop (1200px+)
-- Tablet (768px - 1199px)
-- Mobile (320px - 767px)
+### Payment Flow
 
-## 📞 Troubleshooting
+1. **Cart Checkout**:
+   - User reviews items in cart and proceeds to checkout
+   - System verifies product availability and calculates final price
+   - Shipping information and payment method selection
 
-**Images Not Loading?**
-- Ensure the Next.js server has been restarted after config changes
-- Check browser console for CORS or other network errors
-- Verify that the `remotePatterns` in `next.config.mjs` includes `images.unsplash.com`
+2. **Payment Processing**:
+   - Secure handling of payment details
+   - Real-time transaction validation
+   - Support for multiple payment methods:
+     - Credit/Debit cards
+     - Digital wallets (when configured)
+     - Bank transfers (optional)
 
-**Authentication Errors?**
-- Make sure both frontend and backend servers are running
-- Check that the API base URL in `lib/api.ts` matches your backend URL
-- Clear browser localStorage and try logging in again
+3. **Order Confirmation**:
+   - Transaction receipt generation
+   - Order details stored in database
+   - Email confirmation sent to buyer and seller
 
-**Backend Connection Issues?**
-- Verify the backend is running on port 8000
-- Check for any errors in the terminal running the backend
-- Make sure all required Python packages are installed 
-=======
-# FINAL-SYSTEM
->>>>>>> 027d31e3a26870027cd6a0a701ca06a8149efe33
+4. **Payment Settlement**:
+   - Funds held in escrow until delivery confirmation
+   - Automatic transfer to seller account after delivery period
+   - Commission fees automatically calculated and deducted
+
+### Implementation Details
+
+- Payment processing is handled through a combination of frontend UI and backend API endpoints
+- Sensitive payment information is never stored in the database
+- All payment data transmission uses HTTPS encryption
+- The system is designed to handle payment failures gracefully with appropriate user feedback
+
+
