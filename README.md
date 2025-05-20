@@ -79,19 +79,11 @@ HanyThrift is a modern web application for buying and selling secondhand items, 
 - Python (v3.8 or higher)
 - Git
 
-### Option 1: One-Click Start (Windows)
-
-For Windows users, you can use the provided PowerShell script to start both frontend and backend services with a single command:
-
-```powershell
-./run-dev.ps1
-```
-
 This will:
 1. Start the FastAPI backend server in a new PowerShell window
 2. Start the Next.js frontend development server in the current window
 
-### Option 2: Manual Setup
+### Option 1: Manual Setup
 
 #### Step 1: Frontend Setup
 
@@ -147,28 +139,6 @@ This will:
 ## 💾 Database
 
 The application uses SQLite as its database. The database file (`backend/hanythrift.db`) will be created automatically when you first run the application. Sample products are automatically added for demonstration purposes.
-
-## 📁 Project Structure
-
-```
-hanythrift/
-├── app/                  # Next.js pages and routes
-├── components/           # React components
-├── lib/                  # Utility functions and configs
-├── public/               # Static assets
-│   └── images/           # Image assets
-├── styles/               # Global styles
-├── backend/              # Python FastAPI backend
-│   ├── __pycache__/      # Python cache files
-│   ├── hanythrift.db     # SQLite database
-│   ├── auth.py           # Authentication logic
-│   ├── database.py       # Database connection
-│   ├── main.py           # Main API endpoints
-│   ├── models.py         # Database models
-│   ├── schemas.py        # Pydantic schemas
-│   └── requirements.txt  # Python dependencies
-└── README.md             # This file
-```
 
 ## 🛠️ Development Tips
 
