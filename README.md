@@ -71,19 +71,7 @@ HanyThrift is a modern web application for buying and selling secondhand items, 
   - Core models: User, Product, Order, OrderItem, CartItem
   - Relationships maintained through foreign keys
 
-## 🚀 Quick Start Guide
-
-### Prerequisites
-
-- Node.js (v18 or higher)
-- Python (v3.8 or higher)
-- Git
-
-This will:
-1. Start the FastAPI backend server in a new PowerShell window
-2. Start the Next.js frontend development server in the current window
-
-### Option 1: Manual Setup
+Manual Setup
 
 #### Step 1: Frontend Setup
 
@@ -95,9 +83,6 @@ This will:
 2. Start the frontend development server:
    ```bash
    npm run dev
-   # Or use the batch file
-   ./run_frontend.bat
-   ```
 
    The frontend will be available at `http://localhost:3000`
 
@@ -107,11 +92,13 @@ This will:
    ```bash
    cd backend
    ```
-   python -m uvicorn main:app --reload 
+   python -m uvicorn main:app --reload
+   
 3. Install Python dependencies:
    ```bash
    pip install -r requirements.txt
    ```
+   
 5. Start the backend server:
    ```bash
    python -m uvicorn main:app --reload
@@ -136,27 +123,6 @@ This will:
    - System automatically refreshes 5 minutes before expiration
    - New tokens issued if refresh token is valid
 
-## 💾 Database
-
-The application uses SQLite as its database. The database file (`backend/hanythrift.db`) will be created automatically when you first run the application. Sample products are automatically added for demonstration purposes.
-
-## 🛠️ Development Tips
-
-1. **Running Both Services**
-   - You need to run both the frontend and backend servers simultaneously
-   - Use separate terminal windows or use the provided batch files
-
-2. **Image Loading**
-   - External images from Unsplash are used for product images
-   - The Next.js configuration in `next.config.mjs` includes Unsplash in the allowed domains
-
-3. **Authentication Issues**
-   - If you encounter "Failed to refresh token" errors, ensure both frontend and backend are running
-   - Check browser console for more detailed error messages
-
-4. **Database Reset**
-   - Sample products are recreated each time the backend starts
-   - To keep existing data, comment out the `create_sample_products()` call in `main.py`
 
 ## 🔒 Security Features
 
@@ -201,5 +167,3 @@ HanyThrift uses a secure payment processing system that handles customer transac
 - Sensitive payment information is never stored in the database
 - All payment data transmission uses HTTPS encryption
 - The system is designed to handle payment failures gracefully with appropriate user feedback
-
-
