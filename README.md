@@ -71,39 +71,6 @@ HanyThrift is a modern web application for buying and selling secondhand items, 
   - Core models: User, Product, Order, OrderItem, CartItem
   - Relationships maintained through foreign keys
 
-Manual Setup
-
-#### Step 1: Frontend Setup
-
-1. Install Node.js dependencies:
-   ```bash
-   npm install
-   ```
-
-2. Start the frontend development server:
-   ```bash
-   npm run dev
-
-   The frontend will be available at `http://localhost:3000`
-
-#### Step 2: Backend Setup
-
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-   python -m uvicorn main:app --reload
-   
-3. Install Python dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-   
-5. Start the backend server:
-   ```bash
-   python -m uvicorn main:app --reload
-   ```
-   The backend API will be available at `http://localhost:8000`
 
 ## 🔐 Authentication Flow
 
