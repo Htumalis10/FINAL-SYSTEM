@@ -23,13 +23,6 @@ HanyThrift is a modern web application for buying and selling secondhand items, 
   - Secure payment integration
   - Order history tracking
 
-- **UI/UX Features**
-  - Responsive design
-  - Category-based navigation
-  - Loading states and error handling
-  - Toast notifications
-  - Offline support for images
-
 ## 💻 Technologies and System Architecture
 
 ### Languages and Frameworks
@@ -44,59 +37,6 @@ HanyThrift is a modern web application for buying and selling secondhand items, 
   - FastAPI: Modern, high-performance web framework
   - SQLAlchemy: SQL toolkit and ORM
   - Pydantic: Data validation and settings management
-
-### System Architecture
-- **Client-Server Model**: The application follows a client-server architecture where the Next.js frontend communicates with the FastAPI backend via RESTful API calls.
-
-- **Data Flow**:
-  1. User interacts with the Next.js frontend
-  2. Frontend makes API requests to the backend using the API client (`/lib/api.ts`)
-  3. Backend processes requests, interacts with the SQLite database, and returns responses
-  4. Frontend updates the UI based on responses
-
-- **Authentication Flow**:
-  1. User credentials are sent to the backend
-  2. Backend validates credentials and issues JWT tokens
-  3. Frontend stores tokens (access token in memory, refresh token in localStorage)
-  4. Tokens are automatically refreshed before expiration
-  5. Protected routes check for valid tokens before allowing access
-
-- **State Management**:
-  - React Context API used for global state (auth, cart)
-  - Component-level state for UI interactions
-  - Backend maintains session information via JWT tokens
-
-- **Database Design**:
-  - SQLite database with SQLAlchemy ORM
-  - Core models: User, Product, Order, OrderItem, CartItem
-  - Relationships maintained through foreign keys
-
-
-## 🔐 Authentication Flow
-
-1. **Registration**:
-   - User submits registration form
-   - Backend validates and creates user account
-   - Automatic login after successful registration
-
-2. **Login**:
-   - User submits credentials
-   - Backend validates and issues JWT tokens
-   - Access token stored in memory
-   - Refresh token stored in localStorage
-
-3. **Token Refresh**:
-   - Access token expires after 30 days (configurable)
-   - System automatically refreshes 5 minutes before expiration
-   - New tokens issued if refresh token is valid
-
-
-## 🔒 Security Features
-
-- JWT-based authentication with token refresh
-- Password hashing with bcrypt
-- CORS protection
-- SQLite database for simple deployment
 
 
 ## 💰 Payment System
